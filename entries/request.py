@@ -1,3 +1,6 @@
+import sqlite3
+import json
+from models import Entry, Mood
 ENTRIES = [
     { 
         "id": 1, 
@@ -24,19 +27,98 @@ ENTRIES = [
 
 
 def get_all_entries():
-    return ENTRIES
+    # Open a connection to the database
+    with sqlite3.connect("./dailyjournal.db") as conn:
 
-# Function with a single parameter
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.concept,
+            e.entry,
+            e.date,
+            e.mood_id,
+            m.label mood_label
+        FROM Entries e
+        JOIN Moods m
+            ON m.id = e.mood_id
+            """)
+
+        # Initialize an empty list to hold all entry representations
+        entries = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an entry instance from the current row
+            entry = Entry(
+                row['id'], 
+                row['concept'], 
+                row['entry'], 
+                row['date'],
+                row['mood_id']
+                )
+
+            # Create a Mood instance from the current row
+            mood = Mood(
+                row['mood_id'], #Doesn't seem to run without its 3 positional arguments but this returns only 1 animal
+                row['mood_label']
+                )
+
+            # Add the dictionary representation of the mood to the animal
+            entry.mood = mood.__dict__
+
+            # Add the dictionary representation of the entry to the list
+            entries.append(entry.__dict__)
+
+            # Use `json` package to properly serialize list as JSON
+        return json.dumps(entries)
+
 def get_single_entry(id):
-    # Variable to hold the found entry, if it exists
-    requested_entry = None
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    # Iterate the ENTRIES list above. Very similar to the
-    # for..of loops you used in JavaScript.
-    for entry in ENTRIES:
-        # Dictionaries in Python use [] notation to find a key
-        # instead of the dot notation that JavaScript used.
-        if entry["id"] == id:
-            requested_entry = entry
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.concept,
+            e.entry,
+            e.date,
+            e.mood_id
+        FROM Entries e
+        WHERE e.id = ?
+        """, ( id, ))
 
-    return requested_entry
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an entry instance from the current row
+        entry = Entry(
+            data['id'], 
+            data['concept'], 
+            data['entry'],
+            data['date'], 
+            data['mood_id']
+            )
+
+        return json.dumps(entry.__dict__)
+
+def delete_entry(id):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM entries
+        WHERE id = ?
+        """, (id, ))
+    

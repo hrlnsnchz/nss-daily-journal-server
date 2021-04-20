@@ -13,7 +13,7 @@ CREATE TABLE `Moods` (
 );
 
 
-INSERT INTO `Entries` VALUES (null, 'sql queries', "sql queries aren't so bad", 04182021, 2);
+INSERT INTO `Entries` VALUES (null, 'sql queries', "I'm getting the hang of sql queries", 04182021, 1);
 
 INSERT INTO `Moods` VALUES (null, 'Happy');
 INSERT INTO `Moods` VALUES (null, 'OK');
