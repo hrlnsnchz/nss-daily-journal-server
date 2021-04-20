@@ -1,15 +1,21 @@
 CREATE TABLE `Entries` (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	`body`	TEXT NOT NULL,
+	`concept`	TEXT NOT NULL,
+	`entry`		TEXT NOT NULL,
 	`date`	INTEGER NOT NULL,
-    `mood_id` INTEGER NOT NULL FOREIGN KEY
+    `mood_id` INTEGER NOT NULL,
+	FOREIGN KEY(`mood_id`) REFERENCES `Moods`(`id`)
 );
 
--- HAVE NOT RUN YET. VERIFY MOODS
-CREATE TABLE `moods` (
+CREATE TABLE `Moods` (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	`mood`	TEXT NOT NULL
+	`label`	TEXT NOT NULL
 );
 
--- HAVE NOT RUN YET. ADD ONE FOR MOODS TOO
-INSERT INTO `Entries` VALUES (null, 'journal entry body', 04182021, 5);
+
+INSERT INTO `Entries` VALUES (null, 'sql queries', "sql queries aren't so bad", 04182021, 2);
+
+
+
+SELECT * FROM `Entries`;
+
