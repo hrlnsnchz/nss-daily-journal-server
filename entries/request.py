@@ -68,7 +68,7 @@ def get_all_entries():
 
             # Create a Mood instance from the current row
             mood = Mood(
-                row['mood_id'], #Doesn't seem to run without its 3 positional arguments but this returns only 1 animal
+                row['mood_id'],
                 row['mood_label']
                 )
 
@@ -122,3 +122,32 @@ def delete_entry(id):
         WHERE id = ?
         """, (id, ))
     
+def search_entry(searchTerm):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.date,
+            e.entry,
+            e.concept,
+            e.mood_id
+        FROM Entries e
+        WHERE e.entry LIKE ?
+        """, ("%" + searchTerm + "%", ))
+
+        entries = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            entry = Entry(
+                row["id"],
+                row["date"],
+                row["entry"],
+                row["concept"],
+                row["mood_id"])
+            entries.append(entry.__dict__)
+
+    return json.dumps(entries)
