@@ -25,3 +25,16 @@ SELECT * FROM `Entries`;
 
 SELECT * FROM `Moods`;
 
+SELECT
+            e.id,
+            e.concept,
+            e.entry,
+            e.date,
+            e.mood_id
+        FROM Entries e
+        WHERE entry OR concept LIKE '%sql%';
+
+SELECT
+            m.id,
+            m.label
+        FROM Moods m;
