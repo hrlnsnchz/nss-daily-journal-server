@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries, get_single_entry, delete_entry, search_entry
+from entries import get_all_entries, get_single_entry, delete_entry, search_entry, create_entry
 from moods import get_all_moods
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -107,15 +107,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Parse the URL
         (resource, id) = self.parse_url(self.path)
 
-        # Initialize new animal
-        new_animal = None
-        # Add a new animal to the list. Don't worry about
-        # the orange squiggle, you'll define the create_animal
+        # Initialize new entry
+        new_entry = None
+        # Add a new entry to the list. Don't worry about
+        # the orange squiggle, you'll define the create_entry
         # function next.
-        if resource == "animals":
-            new_animal = create_animal(post_body)
-            # Encode the new animal and send in response
-            self.wfile.write(f"{new_animal}".encode())
+        if resource == "entries":
+            new_entry = create_entry(post_body)
+            # Encode the new entry and send in response
+            self.wfile.write(f"{new_entry}".encode())
 
         
 

@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models import Entry, Mood
+
 ENTRIES = [
     { 
         "id": 1, 
@@ -161,3 +162,26 @@ def search_entry(searchTerm):
             entries.append(entry.__dict__)
 
     return json.dumps(entries)
+
+def create_entry(new_entry):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Entries
+            (concept, entry, date, mood_id)
+        VALUES
+            (?, ?, ?, ?);
+        """, (
+            new_entry['concept'],
+            new_entry['entry'],
+            new_entry['date'],
+            new_entry['mood_id'], ))
+
+        id = db_cursor.lastrowid
+
+        new_entry['id'] = id
+
+    return json.dumps(new_entry)
+
+# INSERT INTO `Entries` VALUES (null, 'sql queries', "I'm getting the hang of sql queries", 04182021, 1);
