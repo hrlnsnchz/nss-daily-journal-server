@@ -94,9 +94,12 @@ def get_single_entry(id):
             e.concept,
             e.entry,
             e.date,
-            e.mood_id
+            e.mood_id,
+            m.label mood_label
         FROM Entries e
+        JOIN Moods m
         WHERE e.id = ?
+        AND e.mood_id = m.id
         """, ( id, ))
 
         # Load the single result into memory
@@ -110,6 +113,13 @@ def get_single_entry(id):
             data['date'], 
             data['mood_id']
             )
+            
+        mood = Mood(
+            data['mood_id'],
+            data['mood_label']
+        )
+
+        entry.mood = mood.__dict__
 
         return json.dumps(entry.__dict__)
 

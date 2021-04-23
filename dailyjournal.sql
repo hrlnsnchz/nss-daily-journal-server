@@ -30,9 +30,12 @@ SELECT
             e.concept,
             e.entry,
             e.date,
-            e.mood_id
+            e.mood_id,
+            m.label mood_label
         FROM Entries e
-        WHERE entry OR concept LIKE '%sql%';
+        JOIN Moods m
+        WHERE e.id = 1 
+        AND e.mood_id = m.id;
 
 SELECT
             m.id,
